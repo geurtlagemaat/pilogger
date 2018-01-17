@@ -12,11 +12,9 @@ from twisted.internet import reactor
 from twisted.internet import task
 import traceback
 import wiringpi as wiringpi
-# from serialNodesController import SerialNodesController
 
 def weatherUploadEvent(NodeControl):
     weatherUpload.doUpdate(NodeControl)
-
 
 def pvdataUploadEvent(NodeControl):
     pvdataUpload.doUpdate(NodeControl)
@@ -25,8 +23,6 @@ if __name__ == '__main__':
     now = datetime.datetime.now()
     oNodeControl = nodeControl.nodeControl(r'settings/bliknetnode.conf')
     oNodeControl.log.info("BliknetNode: %s starting at: %s." % (oNodeControl.nodeID, now))
-
-    # mySerialNodesController = SerialNodesController(oNodeControl)
 
     # the smartmeter task, triggered by to serial line event
     if oNodeControl.nodeProps.has_option('smartmeter', 'active') and oNodeControl.nodeProps.getboolean('smartmeter',
