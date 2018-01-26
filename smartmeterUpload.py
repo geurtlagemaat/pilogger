@@ -3,6 +3,7 @@ import os
 import time
 import os.path
 import traceback
+import requests
 
 from twisted.protocols import basic
 from twisted.internet import reactor
@@ -99,6 +100,34 @@ class SmartMeterProtocol(basic.LineReceiver):
                                               bRetain=True)
                 self._NodeControl.MQTTPublish(sTopic="smartmeter/gas", sValue=str(dayGasUse), iQOS=0, bRetain=True)
                 self._telegram = []
+
+                if self._NodeControl.nodeProps.has_option('domoticz', 'active') and \
+                        self._NodeControl.nodeProps.getboolean('domoticz', 'active'):
+                    domP1String = "http://%s:%s/json.htm?type=command&param=udevice&idx=%s&nvalue=0&svalue=%s;%s;%s;%s;%s;0" % \
+                                                  (self._NodeControl.nodeProps.get('domoticz', 'url'),\
+                                                   self._NodeControl.nodeProps.get('domoticz', 'port'),\
+                                                   self._NodeControl.nodeProps.get('domoticz', 'P1Indx'), \
+                                                   str(readings.low_tariff * 1000), \
+                                                   str(readings.normal_tariff * 1000), \
+                                                   str(readings.low_tariff_produced * 1000), \
+                                                   str(readings.normal_tariff_produced * 1000), \
+                                                   str(readings.actual_usage) )
+                    self._NodeControl.log.debug("Publish: [%s]" % domP1String)
+                    domoticzResult = requests.get(domP1String, \
+                                                  auth=(self._NodeControl.nodeProps.get('domoticz', 'user'), \
+                                                        self._NodeControl.nodeProps.get('domoticz', 'pw')))
+                    self._NodeControl.log.debug("Result: %s." % domoticzResult)
+                    domGasString = "http://%s:%s/json.htm?type=command&param=udevice&idx=%s&nvalue=0&svalue=%s" % \
+                                                  (self._NodeControl.nodeProps.get('domoticz', 'url'),\
+                                                   self._NodeControl.nodeProps.get('domoticz', 'port'),\
+                                                   self._NodeControl.nodeProps.get('domoticz', 'GASIndx'), \
+                                                   str(readings.gas_usage) )
+                    self._NodeControl.log.debug("Publish: [%s]" % domGasString)
+                    domoticzGasResult = requests.get(domGasString, \
+                                                        auth=(self._NodeControl.nodeProps.get('domoticz', 'user'), \
+                                                              self._NodeControl.nodeProps.get('domoticz', 'pw')))
+                    self._NodeControl.log.debug("Result: %s." % domoticzGasResult)
+
             except Exception, exp:
                 self._NodeControl.log.warning("Can not read or upload smartmeter data: %s" % traceback.format_exc())
         else:
