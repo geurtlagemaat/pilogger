@@ -5,6 +5,7 @@ __author__ = 'geurt'
 import smartmeterUpload
 import weatherUpload
 import pvdataUpload
+import sensorUpload
 import busListner
 import datetime
 from twisted.web.server import Site
@@ -19,6 +20,9 @@ def weatherUploadEvent(NodeControl):
 def pvdataUploadEvent(NodeControl):
     pvdataUpload.doUpdate(NodeControl)
 
+def heatingSensorUpdateEvent(NodeControl):
+    sensorUpload.doUpdate(NodeControl)
+
 if __name__ == '__main__':
     now = datetime.datetime.now()
     oNodeControl = nodeControl.nodeControl(r'settings/bliknetnode.conf')
@@ -30,6 +34,18 @@ if __name__ == '__main__':
         sm_wrap = smartmeterUpload.SmartMeterWrapper(oNodeControl)
     else:
         oNodeControl.log.info("Smartmeter upload task not active.")
+
+    # heating sensor upload
+    if oNodeControl.nodeProps.has_option('heatingsensors', 'active') and\
+            oNodeControl.nodeProps.getboolean('heatingsensors', 'active'):
+        iHeatingSensorUploadInt = 60
+        if oNodeControl.nodeProps.has_option('heatingsensors', 'uploadInterval'):
+            iWeatherUploadInt = oNodeControl.nodeProps.getint('heatingsensors', 'uploadInterval')
+        oNodeControl.log.info("heatingsensors upload task active, upload interval: %s" % str(iHeatingSensorUploadInt))
+        l = task.LoopingCall(heatingSensorUpdateEvent, oNodeControl)
+        l.start(iHeatingSensorUploadInt)
+    else:
+        oNodeControl.log.info("heatingsensors upload task not active.")
 
     # weather upload task
     if oNodeControl.nodeProps.has_option('weather', 'active') and oNodeControl.nodeProps.getboolean('weather',
