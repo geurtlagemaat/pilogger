@@ -102,5 +102,3 @@ class busListner(Resource):
 
     def getChild(self, name, request):
         return busPage(self._NodeControl)
-
-
