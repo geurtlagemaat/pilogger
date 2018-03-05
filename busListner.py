@@ -13,7 +13,7 @@ class busPage(Resource):
     def __init__(self, NodeControl):
         Resource.__init__(self)
         self._NodeControl = NodeControl
-        self._ResetState = 10;
+        self._ResetState = 10
 
     def render_GET(self, request):
         # Quick GET handler to get IP Cam events
