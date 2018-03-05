@@ -2,17 +2,16 @@
 Raspberry Pi Logger application based on Python Twisted and MQTT.
 Provides logging and publishing of:
 * PVData (SBFSpot data from PV SMA);
-* P1 Smartmeter.
+* P1 Smartmeter;
+* weather data upload Wunderground API;
+* heating sensordata & pump control;
+* IP CAM Motion detection to MQTT;
 
-Interfaces with Arduino nodes (PIR events and RGB Lights)
+Interfaces with Arduino nodes (Door keypad etc.)
 
 Work in progess
 
 Todo:
-* Remove pywws (moved to Bliknet weatherstation)
-* Rewrite buslistner (serial), Remove Arduino Mega
-* Remove SBFspotUpload zie https://pvoutput.org/help.html#api-addoutput
 * Cleanup code
 * Minimal Docs
 * Fabric installation
-* Koppel circulatiepomp
