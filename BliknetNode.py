@@ -114,5 +114,4 @@ if __name__ == '__main__':
     if oNodeControl.nodeProps.has_option('watchdog', 'circusWatchDog'):
         if oNodeControl.nodeProps.getboolean('watchdog', 'circusWatchDog') == True:
             oNodeControl.circusNotifier.start()
-
     reactor.run()
