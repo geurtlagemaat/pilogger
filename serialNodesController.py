@@ -10,6 +10,7 @@ class SerialNodesController(object):
     def __init__(self, oNodeControl):
         self._NodeControl = oNodeControl
         # list all serial ports: python -m serial.tools.list_ports
+        self._ResetState = 10
         self._connectSerialPort()
 
     def _connectSerialPort(self):
@@ -32,16 +33,21 @@ class SerialNodesController(object):
                 self._NodeControl.log.debug("Deuropen signal (keypad)")
                 self.doOpenDoor()
                 self._NodeControl.MQTTPublish(sTopic="deur/keyopen", sValue="ON", iQOS=0, bRetain=False)
+                reactor.callLater(self._ResetState, self.ResetState, topic="deur/keyopen")
             elif ( (int(RecMsg.Function)==2) and (int(RecMsg.MsgValue)==1) ):
                 self._NodeControl.log.debug("Deuropen signal (RFID)")
                 self.doOpenDoor()
                 self._NodeControl.MQTTPublish(sTopic="deur/rfidopen", sValue="ON", iQOS=0, bRetain=False)
+                reactor.callLater(self._ResetState, self.ResetState, topic="deur/rfidopen")
             elif ( (int(RecMsg.Function)==3) and (int(RecMsg.MsgValue)==1) ):
                 self._NodeControl.log.debug("Deurbel signal.")
                 self._NodeControl.MQTTPublish(sTopic="deur/ring", sValue="ON", iQOS=0, bRetain=False)
+                reactor.callLater(self._ResetState, self.ResetState, topic="deur/ring")
             elif ( (int(RecMsg.Function)==4) and (int(RecMsg.MsgValue)==1) ):
                 self._NodeControl.log.debug("Tampering Keypad")
                 self._NodeControl.MQTTPublish(sTopic="tampering/keypad", sValue="ON", iQOS=0, bRetain=False)
+            elif ((int(RecMsg.Function) == 4) and (int(RecMsg.MsgValue) == 0)):
+                reactor.callLater(self._ResetState, self.ResetState, topic="tampering/keypad")
 
     def ResetState(self, topic):
         self._NodeControl.MQTTPublish(sTopic=topic, sValue="OFF", iQOS=0, bRetain=False)
