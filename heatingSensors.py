@@ -39,6 +39,14 @@ def doUpdate(NodeControl, pumpControl, ioPin):
     except Exception, exp:
         NodeControl.log.warning("status update, error: %s." % (traceback.format_exc()))
 
+def doAntiFreezeRun(NodeControl, ioPin):
+    if wiringpi.digitalRead(ioPin):
+        # was 1, off, turn it on (0)
+        wiringpi.digitalWrite(ioPin, 0)
+        NodeControl.MQTTPublish(sTopic="heating/pump", sValue="ON", iQOS=0, bRetain=True)
+    # uitschakelen doen we niet omdat bij de volgende doUpdate de pomp aan de hand van de delta vanzelf
+    # wel weer aan of uit wordt geschakeld.
+
 def checkPump(NodeControl, tempIn, tempOut, ioPin):
         deltaTemp = 2
         if NodeControl.nodeProps.has_option('heatingsensors', 'deltatemp'):

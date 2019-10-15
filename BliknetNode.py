@@ -24,6 +24,9 @@ def pvdataUploadEvent(NodeControl):
 def heatingSensorUpdateEvent(NodeControl, pumpControl, ioPin):
     heatingSensors.doUpdate(NodeControl, pumpControl, ioPin)
 
+def pumpAntiFreezeEvent(NodeControl, pumpControl, ioPin):
+    heatingSensors.doAntiFreezeRun(NodeControl, ioPin)
+
 if __name__ == '__main__':
     now = datetime.datetime.now()
     oNodeControl = nodeControl.nodeControl(r'settings/bliknetnode.conf')
@@ -48,7 +51,7 @@ if __name__ == '__main__':
             oNodeControl.nodeProps.getboolean('heatingsensors', 'active'):
         iHeatingSensorUploadInt = 60
         if oNodeControl.nodeProps.has_option('heatingsensors', 'uploadInterval'):
-            iWeatherUploadInt = oNodeControl.nodeProps.getint('heatingsensors', 'uploadInterval')
+            iHeatingSensorUploadInt = oNodeControl.nodeProps.getint('heatingsensors', 'uploadInterval')
         oNodeControl.log.info("heatingsensors upload task active, upload interval: %s" % str(iHeatingSensorUploadInt))
         pumpControl = False
         ioPin = None
@@ -63,6 +66,11 @@ if __name__ == '__main__':
                 wiringpi.pinMode(ioPin, 1)
             except Exception, exp:
                 oNodeControl.log.error("Init Pump GPIO error: %s" % traceback.format_exc())
+            if oNodeControl.nodeProps.has_option('heatingsensors', 'pumpAntiFreezeInterval'):
+                iAntiFreezeInterval = oNodeControl.nodeProps.getint('heatingsensors', 'pumpAntiFreezeInterval')
+                l = task.LoopingCall(pumpAntiFreezeEvent, oNodeControl, ioPin)
+                l.start(iAntiFreezeInterval)
+                oNodeControl.log.info("pump anti freeze task active, interval: %s." % str(iAntiFreezeInterval))
         l = task.LoopingCall(heatingSensorUpdateEvent, oNodeControl, pumpControl, ioPin)
         l.start(iHeatingSensorUploadInt)
     else:
