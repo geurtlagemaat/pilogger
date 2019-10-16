@@ -24,7 +24,7 @@ def pvdataUploadEvent(NodeControl):
 def heatingSensorUpdateEvent(NodeControl, pumpControl, ioPin):
     heatingSensors.doUpdate(NodeControl, pumpControl, ioPin)
 
-def pumpAntiFreezeEvent(NodeControl, pumpControl, ioPin):
+def pumpAntiFreezeEvent(NodeControl, ioPin):
     heatingSensors.doAntiFreezeRun(NodeControl, ioPin)
 
 if __name__ == '__main__':
@@ -70,7 +70,7 @@ if __name__ == '__main__':
                 iAntiFreezeInterval = oNodeControl.nodeProps.getint('heatingsensors', 'pumpAntiFreezeInterval')
                 l = task.LoopingCall(pumpAntiFreezeEvent, oNodeControl, ioPin)
                 l.start(iAntiFreezeInterval)
-                oNodeControl.log.info("pump anti freeze task active, interval: %s." % str(iAntiFreezeInterval))
+                oNodeControl.log.info("Pump anti freeze task active, interval: %s." % str(iAntiFreezeInterval))
         l = task.LoopingCall(heatingSensorUpdateEvent, oNodeControl, pumpControl, ioPin)
         l.start(iHeatingSensorUploadInt)
     else:

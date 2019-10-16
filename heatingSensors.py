@@ -40,8 +40,9 @@ def doUpdate(NodeControl, pumpControl, ioPin):
         NodeControl.log.warning("status update, error: %s." % (traceback.format_exc()))
 
 def doAntiFreezeRun(NodeControl, ioPin):
+    NodeControl.log.debug("check AntiFreeze Run.")
     if wiringpi.digitalRead(ioPin):
-        # was 1, off, turn it on (0)
+        NodeControl.log.debug("check AntiFreeze Run, start pump")
         wiringpi.digitalWrite(ioPin, 0)
         NodeControl.MQTTPublish(sTopic="heating/pump", sValue="ON", iQOS=0, bRetain=True)
     # uitschakelen doen we niet omdat bij de volgende doUpdate de pomp aan de hand van de delta vanzelf
@@ -60,11 +61,13 @@ def checkPump(NodeControl, tempIn, tempOut, ioPin):
                 # was 1, off, turn it on (0)
                 wiringpi.digitalWrite(ioPin, 0)
                 NodeControl.MQTTPublish(sTopic="heating/pump", sValue="ON", iQOS=0, bRetain=True)
+                NodeControl.log.debug("Pump started")
         else:
             # pump off
             if not wiringpi.digitalRead(ioPin):
                 wiringpi.digitalWrite(ioPin, 1)
                 NodeControl.MQTTPublish(sTopic="heating/pump", sValue="OFF", iQOS=0, bRetain=True)
+                NodeControl.log.debug("Pump stopped")
 
 def getDS18B20Temp(NodeControl, sSensorPath):
     mytemp = None
