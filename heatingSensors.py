@@ -50,12 +50,15 @@ def doAntiFreezeRun(NodeControl, ioPin):
 
 def checkPump(NodeControl, tempIn, tempOut, ioPin):
         deltaTemp = 2
+        pumpOnTemp = 34
         if NodeControl.nodeProps.has_option('heatingsensors', 'deltatemp'):
             deltaTemp = NodeControl.nodeProps.getint('heatingsensors', 'deltatemp')
+        if NodeControl.nodeProps.has_option('heatingsensors', 'pumpontemp'):
+            pumpOnTemp = NodeControl.nodeProps.getint('heatingsensors', 'pumpontemp')
         # relay is NC: 0 - pump on, 1 pump off
         sensorDiffTemp = tempIn - tempOut
         NodeControl.log.debug("Pumpcontrol, delta temp: %s" % sensorDiffTemp)
-        if sensorDiffTemp > deltaTemp:
+        if ( (sensorDiffTemp > deltaTemp) or (tempIn > pumpOnTemp) ):
             # pump on
             if wiringpi.digitalRead(ioPin):
                 # was 1, off, turn it on (0)

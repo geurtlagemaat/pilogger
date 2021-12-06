@@ -70,6 +70,14 @@ class SmartMeterProtocol(basic.LineReceiver):
                     fo.write("gaszeroreading=%s\n" % readings.gas_usage)
                     fo.write("eleczerousereading=%s\n" % totalEnergyUse)
                     fo.write("eleczerogenreading=%s\n" % totalEnergyGen)
+                    totalRainFile = self._NodeControl.datadir + "totalRain.dat"
+                    if (os.path.isfile(totalRainFile)):
+                        configParser = ConfigParser.RawConfigParser()
+                        configParser.read(totalRainFile)
+                        dayStartTotalRain = configParser.get('raindata', 'totalrain')
+                        fo.write("rainzeroreading=%s\n" % dayStartTotalRain)
+                    else:
+                        fo.write("rainzeroreading=0\n")
                     fo.close()
                 else:
                     try:

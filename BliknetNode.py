@@ -57,7 +57,6 @@ if __name__ == '__main__':
         ioPin = None
         if oNodeControl.nodeProps.has_option('heatingsensors', 'pumpcontrol') and \
                 oNodeControl.nodeProps.getboolean('heatingsensors', 'pumpcontrol'):
-            # TODO daily anti freeze run
             ioPin = 18
             pumpControl = True
             if oNodeControl.nodeProps.has_option('heatingsensors', 'pumppin'):
