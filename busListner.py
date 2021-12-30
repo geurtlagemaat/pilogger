@@ -4,7 +4,7 @@ import ftplib
 import os
 import os.path
 import traceback
-import time, datetime, ConfigParser
+import time, datetime, configparser
 
 from twisted.internet import reactor
 from twisted.web.resource import Resource
@@ -155,7 +155,7 @@ class busPage(Resource):
                     except ftplib.err_perm:
                         self._NodeControl.log.warning("Error: cannot read file %s" % sNewestFile)
                         os.unlink(sNewestFile)
-                except Exception, exp:
+                except Exception as exp:
                     self._NodeControl.log.warning(
                         "Unable to connect to Cam NAS server at: %s, error: %s." % (sFTPServer, traceback.format_exc()))
             finally:

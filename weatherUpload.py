@@ -4,7 +4,7 @@ import datetime
 import os
 import traceback
 import time
-import ConfigParser
+import configparser
 
 """
 Parses PYWWS weather data (https://pywws.readthedocs.io/en/latest/) and publishes in to MQTT 
@@ -45,7 +45,7 @@ def doUpdate(NodeControl):
                             f = open(fnameDayStart, 'w')
                             configParser.write(f)
                             f.close()
-                        except Exception, exp:
+                        except Exception as exp:
                             NodeControl.log.warning("Can not write day start rain value to: %s, error: %s." % (
                                 fnameDayStart, traceback.format_exc()))
                 else:
@@ -57,7 +57,7 @@ def doUpdate(NodeControl):
                         f = open(fnameDayStart, 'w')
                         configParser.write(f)
                         f.close()
-                    except Exception, exp:
+                    except Exception as exp:
                         NodeControl.log.warning("Can not write day start rain value to: %s, error: %s." % (
                             fnameDayStart, traceback.format_exc()))
 
@@ -77,7 +77,7 @@ def doUpdate(NodeControl):
                 NodeControl.MQTTPublish(sTopic="weer/rain-1h", sValue=str(Rain1H), iQOS=0, bRetain=True)
             else:
                 pass # we wachten op de volgende ronde, toeval dat het bestand nu niet bestaat de smartmeter checked dit elke 10 sec. dus de volgende keer is ie er wel
-        except Exception, exp:
+        except Exception as exp:
             NodeControl.log.warning(
                 "Can not read raw weather data. Path: %s, error: %s." % (sPath, traceback.format_exc()))
     else:

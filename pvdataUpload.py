@@ -28,7 +28,7 @@ def UploadPVData(NodeControl, sDBPath):
         readTime = 0
         readPower = 0
         for row in rows:
-            print row
+            print(row)
             readTime = row[0]
             readPower = row[1]
         if ( readTime > (curdatetime - 600)):
@@ -52,5 +52,5 @@ def UploadPVData(NodeControl, sDBPath):
             NodeControl.MQTTPublish(sTopic="pvdata/temp", sValue=str(row[2]), iQOS=0, bRetain=True)
         con.close()
         NodeControl.log.debug("Read from PVoutput DB: %s and upload succes" % sDBPath)
-    except Exception, exp:
+    except Exception as exp:
         NodeControl.log.warning("Can not upload pvdata. DBPath: %s, error: %s." % (sDBPath, traceback.format_exc()))

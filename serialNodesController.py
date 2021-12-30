@@ -57,8 +57,8 @@ class SerialNodesController(object):
             self._serialPort.write(sSerialMessage)
             sleep(0.1)
             return True
-        except Exception, exp:
-            print traceback.format_exc()
+        except Exception as exp:
+            print(traceback.format_exc())
             self._NodeControl.log.error("SendMessage error: %s." % traceback.format_exc())
             return False
 

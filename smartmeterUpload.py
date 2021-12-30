@@ -1,4 +1,4 @@
-import ConfigParser
+import configparser
 import os
 import time
 import os.path
@@ -91,11 +91,10 @@ class SmartMeterProtocol(basic.LineReceiver):
                         dayEnergyUse = ( (totalEnergyUse - dayStartEnergyUse) * 1000) # watt per uur, geen Kwh
                         dayEnergyGen = ( (totalEnergyGen - dayStartEnergyGen) * 1000) # watt per uur, geen Kwh
                         dayGasUse = ( (readings.gas_usage - dayStartGasUse) * 1000)
-                    except Exception, exp:
+                    except Exception as exp:
                         self._NodeControl.log.warning(
                             "error reading daystart config: %s. Error: %s" % (fnameDayStart, traceback.format_exc()))
-                print "readings: "
-                print readings
+                print("readings: %s" % readings)
 
                 self._NodeControl.log.debug(
                     "Calculation results: day gas use: %s liter, day net energy use: %s wh, teruggeleverd: %s wh and current power: %s watt." % (
@@ -136,7 +135,7 @@ class SmartMeterProtocol(basic.LineReceiver):
                                                               self._NodeControl.nodeProps.get('domoticz', 'pw')))
                     self._NodeControl.log.debug("Result: %s." % domoticzGasResult)
 
-            except Exception, exp:
+            except Exception as exp:
                 self._NodeControl.log.warning("Can not read or upload smartmeter data: %s" % traceback.format_exc())
         else:
             self._telegram.append(line)
@@ -159,7 +158,7 @@ class SmartMeterProtocol(basic.LineReceiver):
         next_is_gas = False
 
         for tg in telegram:
-            print tg
+            print(tg)
             if tg.startswith('1-0:1.8.1'):
                 low_tariff = float(tg[tg.index('(') + 1:tg.index('*')])
             if tg.startswith('1-0:1.8.2'):

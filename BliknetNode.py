@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     try:
         wiringpi.wiringPiSetupGpio()
-    except Exception, exp:
+    except Exception as exp:
         oNodeControl.log.error("Init GPIO error: %s" % traceback.format_exc())
 
     mySerialNodesController = SerialNodesController(oNodeControl)
@@ -63,7 +63,7 @@ if __name__ == '__main__':
                 ioPin = oNodeControl.nodeProps.getint('heatingsensors', 'pumppin')
             try:
                 wiringpi.pinMode(ioPin, 1)
-            except Exception, exp:
+            except Exception as exp:
                 oNodeControl.log.error("Init Pump GPIO error: %s" % traceback.format_exc())
             if oNodeControl.nodeProps.has_option('heatingsensors', 'pumpAntiFreezeInterval'):
                 iAntiFreezeInterval = oNodeControl.nodeProps.getint('heatingsensors', 'pumpAntiFreezeInterval')
@@ -115,7 +115,7 @@ if __name__ == '__main__':
             oNodeControl.nodeProps.getboolean('dooropener', 'active'):
         try:
             wiringpi.pinMode(17, 1)
-        except Exception, exp:
+        except Exception as exp:
             oNodeControl.log.error("Init busPage error: %s" % traceback.format_exc())
 
     if oNodeControl.nodeProps.has_option('watchdog', 'circusWatchDog'):

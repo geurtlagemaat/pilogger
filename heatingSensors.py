@@ -36,7 +36,7 @@ def doUpdate(NodeControl, pumpControl, ioPin):
             NodeControl.log.warning("Can not read heatingretourtemp, no [heatingsensors] heatingretourtemp configured")
         if pumpControl and tempIn is not None and tempOut is not None:
             checkPump(NodeControl, tempIn, tempOut, ioPin)
-    except Exception, exp:
+    except Exception as exp:
         NodeControl.log.warning("status update, error: %s." % (traceback.format_exc()))
 
 def doAntiFreezeRun(NodeControl, ioPin):
@@ -90,6 +90,6 @@ def getDS18B20Temp(NodeControl, sSensorPath):
             return int(mytemp[1])
         else:
             return None
-    except Exception, exp:
+    except Exception as exp:
         NodeControl.log.warning("Error reading sensor, path: %s, error: %s." % (sSensorPath, traceback.format_exc()))
         return None
